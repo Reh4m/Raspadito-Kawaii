@@ -51,7 +51,7 @@ export default {
       catGift: {
         name: "Gatito",
         image:
-          "https://png.pngtree.com/png-clipart/20230405/original/pngtree-cute-cat-sticker-cartoon-kitten-kitty-png-image_9029255.png",
+          "https://images.vexels.com/media/users/3/202532/isolated/lists/e992441625624c289e9e3bcddae1e1db-ilustracion-de-gato-negro-sentado.png",
       },
       threeGift: {
         name: "Arbol",
