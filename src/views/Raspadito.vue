@@ -19,14 +19,15 @@
         </v-container>
         <v-container>
           <v-row align="center" justify="center">
-            <v-col cols="2" v-for="(award, index) in awardsList" :key="index">
-              <v-card flat class="transparent" @click="setCardActive(index)">
+            <v-col cols="2" v-for="(gift, index) in hiddenGifts" :key="index">
+              <v-card
+                flat
+                class="transparent"
+                :disabled="gift.isDisable"
+                @click="onCardClicked(index)"
+              >
                 <v-img
-                  :src="
-                    awardsList[index].isActive
-                      ? awardsList[index].award.image
-                      : defaultImage
-                  "
+                  :src="gift.isActive ? gift.content.image : defaultImage"
                   class="mx-auto"
                 ></v-img>
               </v-card>
@@ -48,23 +49,31 @@ export default {
     return {
       userName: this.$route.params.userName,
       defaultImage: "https://pngimg.com/uploads/gift/gift_PNG5984.png",
-      catGift: {
+      catImage: {
         name: "Gatito",
         image:
           "https://images.vexels.com/media/users/3/202532/isolated/lists/e992441625624c289e9e3bcddae1e1db-ilustracion-de-gato-negro-sentado.png",
       },
-      threeGift: {
+      treeImage: {
         name: "Arbol",
         image:
           "https://i.pinimg.com/originals/23/fb/5b/23fb5b8f0e690a267b9b9dfa049e16c3.png",
       },
-      awardsList: [
-        { award: {}, isActive: false },
-        { award: {}, isActive: false },
-        { award: {}, isActive: false },
-        { award: {}, isActive: false },
+      hiddenGifts: [
+        { content: {}, isActive: false, isDisable: false },
+        { content: {}, isActive: false, isDisable: false },
+        { content: {}, isActive: false, isDisable: false },
+        { content: {}, isActive: false, isDisable: false },
       ],
+      activeCards: 0,
     };
+  },
+  watch: {
+    activeCards() {
+      if (this.isLimitReached()) {
+        this.disableLastCard();
+      }
+    },
   },
   methods: {
     assignRandomGifts() {
@@ -72,17 +81,17 @@ export default {
 
       // Asignar 3 "Gatitos"
       for (let i = 0; i < 3; i++) {
-        gifts.push(this.catGift);
+        gifts.push(this.catImage);
       }
 
       // Asignar 1 "Arbol"
-      gifts.push(this.threeGift);
+      gifts.push(this.treeImage);
 
       const randomNumbers = this.generateRandomNumbers();
 
-      // Asignar los regalos aleatoriamente
+      // Asignar los regalos aleatorios
       for (let i in randomNumbers) {
-        this.awardsList[i].award = gifts[randomNumbers[i]];
+        this.hiddenGifts[i].content = gifts[randomNumbers[i]];
       }
     },
     generateRandomNumbers() {
@@ -98,8 +107,27 @@ export default {
 
       return numbers;
     },
-    setCardActive(award) {
-      this.awardsList[award].isActive = true;
+    // Método que se ejecuta cuando se hace click en una tarjeta
+    onCardClicked(index) {
+      if (this.hiddenGifts[index].isActive) {
+        return;
+      }
+
+      this.hiddenGifts[index].isActive = true;
+
+      this.activeCards++;
+    },
+    // Método que verifica si se han seleccionado 3 tarjetas
+    isLimitReached() {
+      return this.activeCards === 3;
+    },
+    // Método que deshabilita la última tarjeta
+    disableLastCard() {
+      for (let i in this.hiddenGifts) {
+        if (!this.hiddenGifts[i].isActive) {
+          this.hiddenGifts[i].isDisable = true;
+        }
+      }
     },
   },
 };
